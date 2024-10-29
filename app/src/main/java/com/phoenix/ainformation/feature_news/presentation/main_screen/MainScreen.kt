@@ -41,7 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.phoenix.ainformation.R
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.news_api.NewsArticle
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
 import com.phoenix.ainformation.feature_news.presentation.main_screen.components.FeedItem
 import com.phoenix.ainformation.feature_news.presentation.main_screen.components.SearchBar
 
@@ -59,6 +60,7 @@ fun MainScreen(
     onNavigationToAISummaryScreen: (RssItem, String) -> Unit
 ) {
     val feedState by viewModel.filteredFeed.collectAsState()
+    val apiFeedState by viewModel.filteredFeed.collectAsState()
 
     Scaffold(
         topBar = {
@@ -106,43 +108,60 @@ fun MainScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                when (val state = feedState) {
-                    is FeedState.Initial -> {}
-                    is FeedState.Loading -> LoadingIndicator()
-                    is FeedState.Success -> {
+//                when (val state = feedState) {
+//                    is RssFeedState.Initial -> {}
+//                    is RssFeedState.Loading -> LoadingIndicator()
+//                    is RssFeedState.Success -> {
+//                        val filteredFeed = state.items.filter {
+//                            it.title.contains(searchQuery, ignoreCase = true) ||
+//                                    it.description.contains(searchQuery, ignoreCase = true)
+//                        }
+//
+//                        FeedContent(
+//                            feed = filteredFeed,
+//                            onNavigationToNewsDetail = onNavigationToNewsDetail,
+//                            onNavigationToAISummaryScreen = onNavigationToAISummaryScreen
+//                        )
+//                    }
+//                    is RssFeedState.Error -> {
+//                        Column(
+//                            horizontalAlignment = Alignment.CenterHorizontally,
+//                            verticalArrangement = Arrangement.Center,
+//                            modifier = Modifier.fillMaxSize()
+//                        ) {
+//                            Text(
+//                                text = stringResource(R.string.connection_error),
+//                                modifier = Modifier.padding(bottom = 16.dp),
+//                                color = MaterialTheme.colorScheme.onBackground
+//                            )
+//                            Button(
+//                                onClick = { viewModel.fetchApiLatestNews(isScrolling = false) },
+//                                colors = ButtonDefaults.buttonColors(
+//                                    contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                    containerColor = MaterialTheme.colorScheme.secondary
+//                                )
+//                            ) {
+//                                Text(stringResource(R.string.try_again))
+//                            }
+//                        }
+//                    }
+//                }
+                when(val state = apiFeedState) {
+                    is ApiFeedState.Initial -> {}
+                    is ApiFeedState.Loading -> LoadingIndicator()
+                    is ApiFeedState.Success -> {
                         val filteredFeed = state.items.filter {
-                            it.title.contains(searchQuery, ignoreCase = true) ||
-                                    it.description.contains(searchQuery, ignoreCase = true)
-                        }
-
-                        FeedContent(
-                            feed = filteredFeed,
-                            onNavigationToNewsDetail = onNavigationToNewsDetail,
-                            onNavigationToAISummaryScreen = onNavigationToAISummaryScreen
-                        )
+//                            it.title.contains(searchQuery, ignoreCase = true) ||
+//                                    it.description.contains(searchQuery, ignoreCase = true)
+//                        }
+//
+//                        FeedContent(
+//                            feed = filteredFeed,
+//                            onNavigationToNewsDetail = onNavigationToNewsDetail,
+//                            onNavigationToAISummaryScreen = onNavigationToAISummaryScreen
+//                        )
                     }
-                    is FeedState.Error -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(
-                                text = stringResource(R.string.connection_error),
-                                modifier = Modifier.padding(bottom = 16.dp),
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Button(
-                                onClick = { viewModel.fetchRssFeed(isScrolling = false) },
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                                    containerColor = MaterialTheme.colorScheme.secondary
-                                )
-                            ) {
-                                Text(stringResource(R.string.try_again))
-                            }
-                        }
-                    }
+                    is ApiFeedState.Error -> {}
                 }
             }
         }
@@ -151,7 +170,8 @@ fun MainScreen(
 
 @Composable
 fun FeedContent(
-    feed: List<RssItem>,
+//    feed: List<RssItem>,
+    feed: List<NewsArticle>,
     viewModel: MainScreenViewModel = hiltViewModel(),
     onNavigationToNewsDetail: (RssItem) -> Unit,
     onNavigationToAISummaryScreen: (RssItem, String) -> Unit
@@ -167,7 +187,7 @@ fun FeedContent(
                         val lastIndex = lazyListState.layoutInfo.totalItemsCount - 1
 
                         if (lastVisibleItem.index == lastIndex) {
-                            viewModel.fetchRssFeed(isScrolling = true)
+                            viewModel.fetchApiLatestNews(isScrolling = true)
                         }
                     }
                 }

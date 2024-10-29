@@ -1,6 +1,6 @@
 package com.phoenix.ainformation.feature_news.data.repository
 
-import com.phoenix.ainformation.feature_news.domain.model.repository.Paginator
+import com.phoenix.ainformation.feature_news.domain.model.Paginator
 
 /*
  * Generic paginator class that handles pagination logic

@@ -10,8 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.phoenix.ainformation.feature_news.data.repository.DefaultPaginator
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
-import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
+import com.phoenix.ainformation.feature_news.domain.model.news_api.repository.ApiNewsRepository
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.repository.RssNewsRepository
 import com.phoenix.ainformation.feature_news.domain.util.Parser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,16 +30,22 @@ import javax.inject.Inject
  * for the main screen of the news app. It handles fetching and filtering news items,
  * pagination, search functionality, and generating AI summaries for news articles.
  *
- * @param newsRepository The repository used to fetch news items.
+ * @param apiNewsRepository The repository used to fetch news items.
  */
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val newsRepository: NewsRepository,
+    private val rssNewsRepository: RssNewsRepository,
+    private val apiNewsRepository: ApiNewsRepository,
     private val model: GenerativeModel
 ): ViewModel() {
 
-    private val _feedState = MutableStateFlow<FeedState>(FeedState.Initial)
-    val feedState: StateFlow<FeedState> = _feedState.asStateFlow()
+    private val _rssFeedState = MutableStateFlow<RssFeedState>(RssFeedState.Initial)
+    val rssFeedState: StateFlow<RssFeedState> = _rssFeedState.asStateFlow()
+
+    // NewsData API state
+    private val _newsStateFlow = MutableStateFlow<ApiFeedState>(ApiFeedState.Initial)
+    val newsStateFlow: StateFlow<ApiFeedState> = _newsStateFlow.asStateFlow()
+
 
     // Verifies if the Gemini response was correctly fetched and handles the app actions.
     private val _aiSummaryState = MutableStateFlow<AISummaryState>(AISummaryState.Initial)
@@ -54,17 +61,25 @@ class MainScreenViewModel @Inject constructor(
     var state by mutableStateOf(ScreenState())
 
     // News feed filter.
-    val filteredFeed = combine(feedState, searchQuery) { state, query ->
+    val filteredFeed = combine(newsStateFlow, searchQuery) { state, query ->
         when(state){
-            is FeedState.Success -> {
+//            is RssFeedState.Success -> {
+//                state.copy(items = state.items.filter { item ->
+//                    item.title.contains(query, ignoreCase = true) ||
+//                            item.description.contains(query, ignoreCase = true)
+//                })
+//            }
+
+            is ApiFeedState.Success -> {
                 state.copy(items = state.items.filter { item ->
                     item.title.contains(query, ignoreCase = true) ||
                             item.description.contains(query, ignoreCase = true)
                 })
             }
+
             else -> state
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), FeedState.Initial)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ApiFeedState.Initial)
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
@@ -77,7 +92,7 @@ class MainScreenViewModel @Inject constructor(
             state = state.copy(isLoading = it)
         },
         onRequest = { nextPage ->
-            newsRepository.getItems(nextPage, 10)
+            rssNewsRepository.getItems(nextPage, 10)
         },
         getNextKey = {
             state.page + 1
@@ -85,7 +100,7 @@ class MainScreenViewModel @Inject constructor(
         onError = { error ->
             state = when(error){
                 is UnknownHostException -> {
-                    _feedState.value = FeedState.Error("Connection error occurred")
+                    _rssFeedState.value = RssFeedState.Error("Connection error occurred")
                     state.copy(error = "Connection error occurred")
                 }
 
@@ -109,7 +124,7 @@ class MainScreenViewModel @Inject constructor(
     fun fetchRssFeed(isScrolling: Boolean) {
         viewModelScope.launch {
             if (!isScrolling) {
-                _feedState.value = FeedState.Loading
+                _rssFeedState.value = RssFeedState.Loading
             }
 
             paginator.loadNextItems()
@@ -120,12 +135,30 @@ class MainScreenViewModel @Inject constructor(
             }
 
             val processedItems = Parser().extractImageUrls(state.items)
-            _feedState.value = FeedState.Success(processedItems)
+            _rssFeedState.value = RssFeedState.Success(processedItems)
+        }
+    }
+
+    fun fetchApiLatestNews(isScrolling: Boolean) {
+        viewModelScope.launch {
+            if(!isScrolling) {
+                _newsStateFlow.value = ApiFeedState.Loading
+            }
+
+           apiNewsRepository.getLatestNews()
+               .fold(
+                   onSuccess = { articles ->
+                       _newsStateFlow.value = ApiFeedState.Success(articles)
+                   },
+                   onFailure = { error ->
+                       _newsStateFlow.value = ApiFeedState.Error(error.message ?: "Unknown error occurred")
+                   }
+               )
         }
     }
 
     init {
-        fetchRssFeed(isScrolling = false)
+        fetchApiLatestNews(isScrolling = false)
     }
 
     // Updates aiSummarizedState with the latest generated AI response

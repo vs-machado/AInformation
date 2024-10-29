@@ -102,4 +102,5 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.paging.compose)
     implementation(libs.generativeai)
+    implementation(libs.kotlinx.serialization.json)
 }

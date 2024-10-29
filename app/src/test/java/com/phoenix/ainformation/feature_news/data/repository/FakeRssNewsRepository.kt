@@ -1,9 +1,9 @@
 package com.phoenix.ainformation.feature_news.data.repository
 
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
-import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.repository.RssNewsRepository
 
-class FakeNewsRepository: NewsRepository {
+class FakeRssNewsRepository: RssNewsRepository {
 
     override suspend fun getItems(page: Int, pageSize: Int): Result<List<RssItem>> {
         return Result.success(listOf(
