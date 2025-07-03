@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.phoenix.ainformation" />
+                  <option name="mobileSdkAppId" value="1:808778548721:android:8405f357d78298203df050" />
+                  <option name="projectId" value="ainformation-85093" />
+                  <option name="projectNumber" value="808778548721" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

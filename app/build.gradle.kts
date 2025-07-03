@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.secrets.gradle.plugin)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -101,5 +102,6 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.jsoup)
     implementation(libs.paging.compose)
-    implementation(libs.generativeai)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
 }

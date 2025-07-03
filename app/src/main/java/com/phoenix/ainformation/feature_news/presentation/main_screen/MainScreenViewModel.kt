@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.ai.client.generativeai.GenerativeModel
+import com.google.firebase.ai.GenerativeModel
 import com.phoenix.ainformation.feature_news.data.repository.DefaultPaginator
 import com.phoenix.ainformation.feature_news.domain.model.RssItem
 import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
@@ -135,10 +135,10 @@ class MainScreenViewModel @Inject constructor(
             _currentSummarizedItemId.value = itemId
 
             runCatching {
-                val response = model.generateContent("Write a summary about this news in $userLanguage that not exceeds 50 lines. In the beginning of the text " +
+                val response = model.generateContent("Write a summary about this news in $userLanguage that not exceeds 15 lines. In the beginning of the text " +
                         "put the summary in the first line. Write it like a website report. Use paragraphs and indentation" +
                         "when needed. Ensure that the summary reduces the quantity of lines in at least 30% when the news has more than 20 lines." +
-                        "If the author's name is in the news, include it in the first line by writing Publisher: (publisher name) ." +
+                        "If the author's name is in the news, include it in the first line by writing Publisher: (publisher name), then present the summary on the line below. ." +
                         "The news: $newsContent")
 
                 if(response.candidates.isNotEmpty()){
