@@ -3,9 +3,10 @@ package com.phoenix.ainformation.feature_news.presentation.main_screen
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.common.truth.Truth.assertThat
+import com.google.firebase.ai.GenerativeModel
+import com.google.firebase.ai.type.Candidate
+import com.google.firebase.ai.type.GenerateContentResponse
 import com.phoenix.ainformation.feature_news.data.repository.FakeNewsRepository
 import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ class MainScreenViewModelTest {
 
     @Mock private lateinit var model: GenerativeModel
     @Mock private lateinit var generateContentResponse: GenerateContentResponse
-    @Mock private lateinit var candidate: com.google.ai.client.generativeai.type.Candidate
+    @Mock private lateinit var candidate: Candidate
 
     private lateinit var state: MutableState<MainScreenViewModel.ScreenState>
     private lateinit var viewModel: MainScreenViewModel
