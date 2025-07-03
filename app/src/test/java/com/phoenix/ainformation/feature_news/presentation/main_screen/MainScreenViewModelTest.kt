@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.common.truth.Truth.assertThat
-import com.phoenix.ainformation.feature_news.data.repository.FakeNewsRepository
-import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
+import com.phoenix.ainformation.feature_news.data.repository.FakeRssNewsRepository
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.repository.RssNewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -38,15 +38,15 @@ class MainScreenViewModelTest {
 
     private lateinit var state: MutableState<MainScreenViewModel.ScreenState>
     private lateinit var viewModel: MainScreenViewModel
-    private lateinit var newsRepository: NewsRepository
+    private lateinit var rssNewsRepository: RssNewsRepository
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
 
-        newsRepository = FakeNewsRepository()
-        viewModel = MainScreenViewModel(newsRepository, model)
+        rssNewsRepository = FakeRssNewsRepository()
+        viewModel = MainScreenViewModel(rssNewsRepository, model)
         state = mutableStateOf(MainScreenViewModel.ScreenState(isLoading = false, endReached = false))
     }
 

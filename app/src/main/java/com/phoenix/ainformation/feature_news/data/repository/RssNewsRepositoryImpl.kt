@@ -1,13 +1,14 @@
 package com.phoenix.ainformation.feature_news.data.repository
 
 import com.phoenix.ainformation.feature_news.data.api.RssApiService
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
-import com.phoenix.ainformation.feature_news.domain.model.repository.NewsRepository
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.repository.RssNewsRepository
 import javax.inject.Inject
 
-class NewsRepositoryImpl @Inject constructor(
+// Fetch data from RssFeed
+class RssNewsRepositoryImpl @Inject constructor(
     private val rssApiService: RssApiService
-): NewsRepository {
+): RssNewsRepository {
 
     // Fetch items from the rssfeed. pageSize defines how many items will be fetched on each method call.
     override suspend fun getItems(page: Int, pageSize: Int): Result<List<RssItem>> {

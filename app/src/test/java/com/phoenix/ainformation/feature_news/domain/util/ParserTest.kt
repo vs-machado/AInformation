@@ -1,6 +1,6 @@
 package com.phoenix.ainformation.feature_news.domain.util
 
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before

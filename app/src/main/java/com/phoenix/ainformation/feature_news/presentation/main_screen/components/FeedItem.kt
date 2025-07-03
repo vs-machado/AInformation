@@ -40,7 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.phoenix.ainformation.R
-import com.phoenix.ainformation.feature_news.domain.model.RssItem
+import com.phoenix.ainformation.feature_news.domain.model.rss_feed.RssItem
 import com.phoenix.ainformation.feature_news.domain.util.DateUtil
 import com.phoenix.ainformation.feature_news.presentation.main_screen.AISummaryState
 import com.phoenix.ainformation.feature_news.presentation.main_screen.MainScreenViewModel
